@@ -1,0 +1,1588 @@
+M2U PIPELINE SUITE - FUNCTIONS AND OPTIONS GUIDE
+Detailed Feature Reference for Maya-to-Unreal Static Mesh Preparation
+
+============================================================
+DOCUMENT PURPOSE
+============================================================
+
+This document explains the functions, options, presets, validation checks, safe-fix actions, visual helpers, export behavior and report output of M2U Pipeline Suite v1.0.8.
+
+It is written for artists, technical artists and pipeline users who need to understand exactly what each option does and what changes when an option is enabled, disabled, set to warning, or set to blocking.
+
+============================================================
+CORE CONCEPTS
+============================================================
+
+M2U Pipeline Suite is built around four main stages:
+
+1. Analyze
+   The tool inspects selected Maya base mesh transforms and creates a validation result for each asset.
+
+2. Fix
+   The tool performs optional artist-controlled cleanup operations such as backup, rename, freeze transform, delete history, pivot move, visibility fix and grid snapping.
+
+3. Revalidate
+   The tool analyzes the processed assets again so the user can confirm whether issues were resolved.
+
+4. Export
+   The tool exports FBX files, includes matching UCX collision meshes when allowed or required, and writes JSON/HTML reports plus an optional Unreal import script.
+
+The tool treats Maya Y as the height/up axis. Front-facing direction is chosen from +X, -X, +Z, or -Z so pivot target calculations remain deterministic.
+
+============================================================
+STATUS LEVELS
+============================================================
+
+Each asset receives one of these high-level statuses:
+
+Ready
+- No blocking issues were found.
+- The asset is normally eligible for export if Export Ready Assets is enabled.
+
+Warning
+- No blocking issues were found, but one or more warnings were found.
+- The asset is eligible for export only if Export Warning Assets is enabled.
+
+Blocked
+- One or more blocking issues were found.
+- The asset is skipped by default if Skip Blocked Assets is enabled.
+
+============================================================
+SEVERITY SYSTEM
+============================================================
+
+Many validation rules use the same severity choices:
+
+Off
+- The rule does not create warnings or blocking issues.
+- The check may be skipped or marked as disabled.
+- Use this when a rule is not relevant to the current production workflow.
+
+Warning
+- The rule can fail, but the asset is still considered exportable if Export Warning Assets is enabled.
+- Use this for quality-control issues that should be reviewed but should not stop production.
+
+Blocking
+- The rule can fail and block export by setting the asset status to Blocked.
+- Use this for pipeline requirements that must be fixed before export.
+
+============================================================
+DASHBOARD / WIZARD TAB
+============================================================
+
+The Dashboard / Wizard tab is the main workflow area.
+
+------------------------------------------------------------
+Pipeline Preset
+------------------------------------------------------------
+
+The preset dropdown selects a predefined collection of settings. The preset is not applied until the user clicks Apply Preset.
+
+Available presets:
+
+- Marketplace Static Mesh
+- Modular Wall Kit
+- Furniture / Prop
+- Collision Strict
+- Nanite Candidate Check
+
+Changing the preset dropdown alone does not change settings. Clicking Apply Preset writes that preset's values into the UI.
+
+------------------------------------------------------------
+Apply Preset
+------------------------------------------------------------
+
+Applies the currently selected preset to the UI controls.
+
+This can change:
+
+- Naming requirements.
+- Polycount limits.
+- Collision requirement.
+- Grid step and severity.
+- Dimension rules.
+- Pivot target and severity.
+- Advanced readiness checks.
+- Export behavior.
+- Safe-fix defaults.
+
+Apply Preset does not modify Maya scene objects.
+
+------------------------------------------------------------
+1 Analyze Selected Assets
+------------------------------------------------------------
+
+Inspects the selected base mesh transforms in Maya.
+
+It produces:
+
+- Asset status.
+- M2U Score.
+- Validation checks.
+- Warnings.
+- Blocking issues.
+- Fix plan.
+- Manual review notes.
+- Collision matches.
+- Advanced readiness results.
+
+Selection behavior:
+
+- Selected transform nodes are inspected.
+- UCX_* transforms are ignored as base assets when Ignore UCX_* As Base Asset is enabled.
+- Mesh shapes under selected transforms are included when Include Descendant Mesh Shapes is enabled.
+
+Analyze does not modify the Maya scene.
+
+------------------------------------------------------------
+2 Apply Safe Fixes
+------------------------------------------------------------
+
+Applies enabled cleanup operations to the current analysis results.
+
+Possible actions:
+
+- Create backup duplicate.
+- Hide backup duplicate.
+- Unlock transform attributes if enabled.
+- Make selected assets visible if enabled.
+- Rename/sanitize base mesh name.
+- Add required prefix if missing.
+- Sync matching UCX names to the renamed base asset when allowed.
+- Delete construction history.
+- Freeze transforms.
+- Move pivot to target.
+- Snap bounds min to grid.
+- Snap pivot to grid.
+- Revalidate each processed asset after fixes.
+
+After Apply Safe Fixes, the tool restores Maya selection to the processed real base assets rather than leaving backup objects selected.
+
+Apply Safe Fixes can modify Maya scene objects.
+
+------------------------------------------------------------
+3 Revalidate
+------------------------------------------------------------
+
+Runs Analyze Selected Assets again.
+
+Use this after Safe Fix to confirm the current asset state.
+
+Revalidate does not directly modify Maya scene objects.
+
+------------------------------------------------------------
+4 Export FBX + Reports
+------------------------------------------------------------
+
+Exports eligible assets to FBX and writes selected reports.
+
+Export performs a fresh UCX search at export time. This is important because the user may have created, renamed, or synced UCX meshes after the first analysis.
+
+Export can create:
+
+- FBX files.
+- M2U_Pipeline_Report.json.
+- M2U_Pipeline_Report.html.
+- M2U_Unreal_Import_Assets.py.
+
+Export modifies files on disk but does not intentionally modify mesh geometry.
+
+------------------------------------------------------------
+Clear Results
+------------------------------------------------------------
+
+Clears displayed tool results.
+
+It clears:
+
+- Dashboard cards.
+- Asset result table.
+- Detail panel.
+- Report path panel.
+- Internal last analysis/export summary.
+
+It does not:
+
+- Rename assets.
+- Delete assets.
+- Delete backups.
+- Change selection.
+- Export files.
+- Modify scene objects.
+
+Use this when the panel contains old analysis or export information and the user wants a clean view.
+
+------------------------------------------------------------
+Reset to Defaults
+------------------------------------------------------------
+
+Restores friendly Unreal-ready default settings and clears displayed results.
+
+Default behavior is based on the Marketplace Static Mesh preset.
+
+It restores settings such as:
+
+- Required Prefix: SM_
+- Naming Severity: warning
+- Collision Requirement: UCX optional
+- Existing UCX validation enabled
+- Max Polycount: 12000
+- Freeze Required: enabled, blocking
+- Clean History Required: enabled, warning
+- Pivot Target: Bottom Center
+- Grid Step: 10 cm
+- Dimension Check: disabled
+- LOD / socket / material / UV readiness checks: warning
+- Backup Before Fix: enabled
+- Rename / sanitize / freeze / history / pivot fix: enabled
+- UCX name sync: enabled
+- JSON report: enabled
+- HTML report: enabled
+- Unreal import script: enabled
+
+It does not modify Maya scene objects.
+
+============================================================
+EXPORT QUEUE OPTIONS
+============================================================
+
+------------------------------------------------------------
+Export Ready Assets
+------------------------------------------------------------
+
+When enabled, assets with Ready status are exported.
+
+When disabled, Ready assets are skipped even if they have no issues.
+
+------------------------------------------------------------
+Export Warning Assets
+------------------------------------------------------------
+
+When enabled, assets with Warning status are exported.
+
+When disabled, assets with Warning status are skipped.
+
+This is useful when a team wants a stricter export pass but does not want to mark every warning rule as blocking.
+
+------------------------------------------------------------
+Skip Blocked Assets
+------------------------------------------------------------
+
+When enabled, assets with Blocked status are skipped.
+
+When disabled, blocked assets may still be exported depending on export logic and rule state. This is generally not recommended for production use.
+
+Important exception:
+
+If UCX Required is active and no matching UCX collision is found at export time, the export is failed for that asset even if other export options are permissive. This prevents exporting a base mesh alone when required collision is missing.
+
+------------------------------------------------------------
+Write JSON Report
+------------------------------------------------------------
+
+Writes M2U_Pipeline_Report.json.
+
+The JSON report includes:
+
+- Tool name and build.
+- Timestamp.
+- Current settings.
+- Export summary.
+- Full per-asset analysis data.
+- Checks, warnings, blocking issues, fix actions, collision matches and export status.
+
+Use JSON for technical debugging or pipeline integration.
+
+------------------------------------------------------------
+Write HTML Report
+------------------------------------------------------------
+
+Writes M2U_Pipeline_Report.html.
+
+The HTML report includes:
+
+- Summary cards.
+- Per-asset status.
+- M2U Score.
+- Export status.
+- Polycount.
+- Included UCX count.
+- Issues.
+- Fix plan.
+- Fixed actions.
+- Collision matches.
+- Collision target candidates.
+- Core checks.
+- LOD / Material Slot / UV / Socket readiness checks.
+
+Use HTML for artist-friendly QA review.
+
+------------------------------------------------------------
+Write Unreal Import Script
+------------------------------------------------------------
+
+Writes M2U_Unreal_Import_Assets.py.
+
+This script is run inside Unreal Editor Python, not inside Maya.
+
+It imports exported FBX files into:
+
+/Game/M2U_Imported
+
+The generated script sets up automated static mesh import tasks with:
+
+- import_mesh = True
+- import_as_skeletal = False
+- combine_meshes = False
+- generate_lightmap_u_vs = True
+- replace_existing = True
+- save = True
+
+------------------------------------------------------------
+Triangulate FBX Export
+------------------------------------------------------------
+
+When enabled, the FBX exporter is asked to triangulate exported geometry.
+
+When disabled, the tool does not request triangulation during FBX export.
+
+Use enabled when a pipeline requires triangulated meshes before import. Use disabled when the artist wants to preserve the authored polygon structure as much as the FBX exporter allows.
+
+============================================================
+RULES TAB - ASSET SCOPE
+============================================================
+
+------------------------------------------------------------
+Front Axis
+------------------------------------------------------------
+
+Available values:
+
+- +X
+- -X
+- +Z
+- -Z
+
+Front Axis controls how front/back/left/right pivot targets are calculated.
+
+For example, Bottom Front Center means:
+
+- The bottom of the bounding box on Maya Y.
+- The front side determined by Front Axis.
+- The center along the remaining horizontal axis.
+
+Changing Front Axis affects pivot validation, pivot ghost preview and pivot fix target location.
+
+------------------------------------------------------------
+Ignore UCX_* As Base Asset
+------------------------------------------------------------
+
+When enabled, selected transforms beginning with UCX_ are ignored as base assets during analysis.
+
+This prevents collision meshes from being analyzed and exported as separate render assets.
+
+When disabled, UCX_* nodes can be treated as regular selected assets if they contain mesh shapes. This is rarely recommended.
+
+------------------------------------------------------------
+Include Descendant Mesh Shapes
+------------------------------------------------------------
+
+When enabled, mesh shapes under selected transform hierarchies are included.
+
+Use enabled when a selected group or root transform represents one asset with child mesh parts.
+
+When disabled, only direct mesh shapes under the selected transform are considered.
+
+This affects polycount, material collection, UV checks, mesh validity and export preparation.
+
+============================================================
+RULES TAB - NAMING
+============================================================
+
+------------------------------------------------------------
+Enable Naming Rule
+------------------------------------------------------------
+
+When enabled, asset names are checked against the required prefix and sanitization rules.
+
+When disabled, naming validation is skipped.
+
+------------------------------------------------------------
+Required Prefix
+------------------------------------------------------------
+
+Default:
+
+SM_
+
+The tool checks whether each base asset name starts with this prefix.
+
+Examples:
+
+SM_Table_01 passes when required prefix is SM_.
+Table_01 fails when required prefix is SM_.
+ZM_Table_01 passes when required prefix is ZM_.
+
+This prefix is also used by Safe Fix when Rename / Add Prefix If Missing is enabled.
+
+It also contributes to UCX prefix sync workflows when UCX Required is active.
+
+------------------------------------------------------------
+Naming Severity
+------------------------------------------------------------
+
+Off:
+- Naming problems do not create warnings or blocking issues.
+
+Warning:
+- Missing prefix or invalid characters create warnings.
+
+Blocking:
+- Missing prefix or invalid characters block export.
+
+------------------------------------------------------------
+Sanitize Asset Names
+------------------------------------------------------------
+
+When enabled, Safe Fix can replace invalid name characters with underscores and ensure a safe Maya/node-style name.
+
+If an asset name starts with a digit, the sanitization helper can add a safe prefix.
+
+When disabled, the tool does not sanitize names during fix, although the naming check may still report issues.
+
+============================================================
+RULES TAB - GEOMETRY
+============================================================
+
+------------------------------------------------------------
+Max Polycount
+------------------------------------------------------------
+
+Defines the maximum allowed face count for an asset.
+
+The tool uses Maya polyEvaluate face count across the selected asset transform and optionally descendant meshes.
+
+If the asset polycount exceeds Max Polycount, the result depends on Polycount Severity.
+
+------------------------------------------------------------
+Polycount Severity
+------------------------------------------------------------
+
+Off:
+- Polycount failures are ignored for export status.
+
+Warning:
+- Exceeding Max Polycount produces a warning.
+
+Blocking:
+- Exceeding Max Polycount blocks export.
+
+------------------------------------------------------------
+Freeze Required
+------------------------------------------------------------
+
+When enabled, transform values are checked.
+
+The expected frozen state is:
+
+- Translate X/Y/Z approximately 0.
+- Rotate X/Y/Z approximately 0.
+- Scale X/Y/Z approximately 1.
+
+If the object is not frozen, the result depends on Freeze Severity.
+
+------------------------------------------------------------
+Freeze Severity
+------------------------------------------------------------
+
+Off:
+- Freeze failure is ignored for export status.
+
+Warning:
+- Non-frozen transforms create a warning.
+
+Blocking:
+- Non-frozen transforms block export.
+
+------------------------------------------------------------
+Clean History Required
+------------------------------------------------------------
+
+When enabled, the tool checks for construction history beyond ignored Maya utility/history types.
+
+If history is found, the result depends on History Severity.
+
+------------------------------------------------------------
+History Severity
+------------------------------------------------------------
+
+Off:
+- Construction history does not affect export status.
+
+Warning:
+- Construction history creates a warning.
+
+Blocking:
+- Construction history blocks export.
+
+------------------------------------------------------------
+Zero Thickness Warning
+------------------------------------------------------------
+
+When enabled, the bounding box width, height and depth are checked against Zero Thickness Tolerance.
+
+If any axis is equal to or below the tolerance, the tool reports a near-zero axis.
+
+This is useful for identifying planes, collapsed geometry or accidental flat meshes.
+
+------------------------------------------------------------
+Zero Thickness Tolerance
+------------------------------------------------------------
+
+Default:
+
+0.001 cm
+
+Any bounding-box axis at or below this value is treated as near-zero thickness.
+
+------------------------------------------------------------
+Zero Thickness Severity
+------------------------------------------------------------
+
+Off:
+- Near-zero thickness does not affect export status.
+
+Warning:
+- Near-zero thickness creates a warning.
+
+Blocking:
+- Near-zero thickness blocks export.
+
+============================================================
+RULES TAB - DIMENSIONS
+============================================================
+
+------------------------------------------------------------
+Enable Dimension Check
+------------------------------------------------------------
+
+When enabled, the asset bounding-box size is compared against expected width, height and depth.
+
+When disabled, dimension check is skipped.
+
+------------------------------------------------------------
+Expected Width / Height / Depth
+------------------------------------------------------------
+
+These values define the target asset size in centimeters.
+
+Maya Y is treated as height.
+
+Width, height and depth are based on the world bounding box.
+
+------------------------------------------------------------
+Tolerance
+------------------------------------------------------------
+
+Defines how far the actual dimension can differ from the expected dimension.
+
+If all deltas are within tolerance, the dimension check passes.
+
+If any delta is greater than tolerance, the dimension check fails.
+
+------------------------------------------------------------
+Dimension Severity
+------------------------------------------------------------
+
+Off:
+- Dimension mismatch does not affect export status.
+
+Warning:
+- Dimension mismatch creates a warning.
+
+Blocking:
+- Dimension mismatch blocks export.
+
+Important:
+
+Safe Fix does not resize geometry automatically. Dimension failures require manual resizing or profile adjustment.
+
+============================================================
+RULES TAB - PIVOT
+============================================================
+
+------------------------------------------------------------
+Enable Pivot Check
+------------------------------------------------------------
+
+When enabled, the current rotate pivot is compared to the configured Pivot Target.
+
+When disabled, pivot validation is skipped.
+
+------------------------------------------------------------
+Pivot Target
+------------------------------------------------------------
+
+Available targets include:
+
+- Center
+- Bottom Center
+- Bottom Front Center
+- Bottom Back Center
+- Bottom Left Center
+- Bottom Right Center
+- Bottom Front Left
+- Bottom Front Right
+- Bottom Back Left
+- Bottom Back Right
+- Front Center
+- Back Center
+- Left Center
+- Right Center
+- Top Center
+- Top Front Center
+- Top Back Center
+- Top Left Center
+- Top Right Center
+- Top Front Left
+- Top Front Right
+- Top Back Left
+- Top Back Right
+
+The tool calculates these positions from the asset world bounding box and the selected Front Axis.
+
+Changing Front Axis can change the meaning of Front, Back, Left and Right.
+
+------------------------------------------------------------
+Tolerance
+------------------------------------------------------------
+
+Defines allowed pivot difference in centimeters.
+
+If the current pivot is within tolerance on X, Y and Z, the pivot check passes.
+
+------------------------------------------------------------
+Pivot Severity
+------------------------------------------------------------
+
+Off:
+- Pivot mismatch does not affect export status.
+
+Warning:
+- Pivot mismatch creates a warning.
+
+Blocking:
+- Pivot mismatch blocks export.
+
+------------------------------------------------------------
+Pivot Fix Behavior
+------------------------------------------------------------
+
+If Move Pivot To Target is enabled in Prep / Fix and the pivot check is enabled, Safe Fix moves the asset pivot to the configured Pivot Target.
+
+The geometry is not moved by the pivot fix. Only the pivot position is changed.
+
+============================================================
+RULES TAB - GRID
+============================================================
+
+------------------------------------------------------------
+Enable Grid Check
+------------------------------------------------------------
+
+When enabled, the tool checks grid readiness using Grid Step.
+
+When disabled, grid validation is skipped.
+
+------------------------------------------------------------
+Grid Step
+------------------------------------------------------------
+
+Default:
+
+10 cm
+
+The grid check uses this step for bounds snapping and size multiple checks.
+
+------------------------------------------------------------
+Check Bounds Snap
+------------------------------------------------------------
+
+When enabled, the tool checks whether these world bounding-box values are multiples of Grid Step:
+
+- minX
+- minY
+- minZ
+- maxX
+- maxY
+- maxZ
+
+If any are not multiples, bounds snap check fails.
+
+------------------------------------------------------------
+Check Size Multiple
+------------------------------------------------------------
+
+When enabled, the tool checks whether width, height and depth are multiples of Grid Step.
+
+If size is not a multiple of Grid Step, moving the object cannot fix the size. The asset must be resized manually or the profile should be adjusted.
+
+------------------------------------------------------------
+Grid Severity
+------------------------------------------------------------
+
+Off:
+- Grid failures do not affect export status.
+
+Warning:
+- Grid failures create warnings.
+
+Blocking:
+- Grid failures block export.
+
+------------------------------------------------------------
+Grid Fix Behavior
+------------------------------------------------------------
+
+Safe Fix can move the asset if one of these is enabled:
+
+- Snap Bounds Min To Grid
+- Snap Pivot To Grid
+
+Snap Bounds Min To Grid moves the asset so bounding box minX/minY/minZ align to the nearest grid step.
+
+Snap Pivot To Grid moves the asset so the pivot position aligns to the nearest grid step.
+
+The tool does not resize geometry.
+
+============================================================
+RULES TAB - ADVANCED UNREAL READINESS
+============================================================
+
+------------------------------------------------------------
+Enable LOD Readiness Check
+------------------------------------------------------------
+
+When enabled, the tool looks for LOD naming patterns based on the selected asset name.
+
+Example:
+
+SM_Rock_LOD0
+SM_Rock_LOD1
+SM_Rock_LOD2
+
+The tool checks:
+
+- Whether an LOD group exists.
+- Whether LOD0 exists when an LOD group is detected.
+- Whether polycount decreases or stays equal across LOD levels.
+- Whether LOD pivots are consistent.
+
+If no LOD naming is detected, the check passes because single-mesh workflow is valid.
+
+------------------------------------------------------------
+LOD Readiness Severity
+------------------------------------------------------------
+
+Off:
+- LOD issues do not affect export status.
+
+Warning:
+- LOD issues create warnings.
+
+Blocking:
+- LOD issues block export.
+
+------------------------------------------------------------
+Enable Socket / Locator Readiness
+------------------------------------------------------------
+
+When enabled, the tool searches descendants of the selected asset for socket-style transforms or locator nodes.
+
+Detected socket candidates include:
+
+- Names starting with SOCKET_
+- Names starting with Socket_
+- Transform nodes with locator shapes
+
+The tool checks:
+
+- Socket presence.
+- SOCKET_* naming convention.
+- Locked transform attributes on socket nodes.
+
+No sockets found is valid for simple static meshes.
+
+------------------------------------------------------------
+Socket / Locator Severity
+------------------------------------------------------------
+
+Off:
+- Socket issues do not affect export status.
+
+Warning:
+- Socket issues create warnings.
+
+Blocking:
+- Socket issues block export.
+
+------------------------------------------------------------
+Enable Material Slot Readiness
+------------------------------------------------------------
+
+When enabled, the tool gathers materials connected through shading engines and checks material slot quality.
+
+The tool checks:
+
+- Whether any material assignments exist.
+- Whether material slot count exceeds Max Material Slots.
+- Whether default Maya materials are detected.
+- Whether material names use configured prefixes.
+
+------------------------------------------------------------
+Material Prefixes
+------------------------------------------------------------
+
+Default:
+
+M_,MI_,MAT_
+
+Material names must start with one of these prefixes to pass the naming check.
+
+Examples that pass with default prefixes:
+
+- M_Wood
+- MI_Table_Wood
+- MAT_Chair_Fabric
+
+Example that fails:
+
+- standardSurface1
+
+Changing this list changes which material names are accepted.
+
+------------------------------------------------------------
+Max Material Slots
+------------------------------------------------------------
+
+Default:
+
+8
+
+If the number of detected material slots is greater than this value, the Material Slot Count check fails.
+
+Set to a higher number for assets that intentionally use many materials.
+
+------------------------------------------------------------
+Material Slot Severity
+------------------------------------------------------------
+
+Off:
+- Material slot issues do not affect export status.
+
+Warning:
+- Material slot issues create warnings.
+
+Blocking:
+- Material slot issues block export.
+
+------------------------------------------------------------
+Enable UV Readiness Check
+------------------------------------------------------------
+
+When enabled, the tool checks UV readiness.
+
+The tool checks:
+
+- UV sets per shape.
+- Total UV coordinate count.
+- Sampled UV coordinates outside the 0-1 range.
+- Required lightmap UV set if Require Lightmap UV is enabled.
+
+Important:
+
+UV overlap calculation is advisory/manual in v1.0.8. The tool does not provide full UV shell overlap solving.
+
+------------------------------------------------------------
+Require Lightmap UV
+------------------------------------------------------------
+
+When enabled, the tool requires at least one UV set matching the configured Lightmap UV Names.
+
+When disabled, the lightmap UV check passes even if no lightmap UV set is found.
+
+------------------------------------------------------------
+Lightmap UV Names
+------------------------------------------------------------
+
+Default:
+
+lightmap,Lightmap,UV1,uv1,map2
+
+The tool searches UV set names against this comma-separated list.
+
+If Require Lightmap UV is enabled and no UV set matches one of these names, the asset receives a lightmap UV warning or blocking issue depending on UV Readiness Severity.
+
+------------------------------------------------------------
+UV Sample Limit
+------------------------------------------------------------
+
+Default:
+
+2000
+
+The tool samples up to this many UV coordinates per shape for the 0-1 range check.
+
+Higher values inspect more UV coordinates but can be slower on dense meshes.
+
+------------------------------------------------------------
+UV Readiness Severity
+------------------------------------------------------------
+
+Off:
+- UV issues do not affect export status.
+
+Warning:
+- UV issues create warnings.
+
+Blocking:
+- UV issues block export.
+
+============================================================
+PREP / FIX TAB - SAFE FIX OPTIONS
+============================================================
+
+------------------------------------------------------------
+Duplicate Backup Before Fix
+------------------------------------------------------------
+
+When enabled, Safe Fix creates a duplicate backup before modifying the selected asset.
+
+Backups are named using the asset name plus an M2U backup suffix.
+
+This is recommended for safer workflows.
+
+------------------------------------------------------------
+Hide Backups
+------------------------------------------------------------
+
+When enabled, backup duplicates are hidden after creation.
+
+When disabled, backups remain visible in the Maya scene.
+
+------------------------------------------------------------
+Rename / Add Prefix If Missing
+------------------------------------------------------------
+
+When enabled, Safe Fix can rename the base asset to satisfy the naming rule.
+
+It can:
+
+- Add the Required Prefix if missing.
+- Use sanitized naming if Sanitize Asset Names is enabled.
+- Avoid duplicate names by creating a unique final name.
+
+Example:
+
+Chair_01 becomes SM_Chair_01 when Required Prefix is SM_.
+
+------------------------------------------------------------
+Sync UCX Names To Base Prefix When UCX Required
+------------------------------------------------------------
+
+When enabled, matching UCX collision names are synchronized if the base mesh is renamed during Safe Fix.
+
+This only runs when:
+
+- Rename / Add Prefix If Missing is enabled.
+- Collision Check is enabled.
+- Collision Requirement is UCX required.
+- Collision Match Mode is Base asset name.
+
+Example:
+
+Before Safe Fix:
+
+Chair_01
+UCX_Chair_01
+UCX_Chair_01_02
+
+Required Prefix:
+
+SM_
+
+After Safe Fix:
+
+SM_Chair_01
+UCX_SM_Chair_01
+UCX_SM_Chair_01_02
+
+Multi-part UCX suffixes are preserved.
+
+If Collision Match Mode is Exact custom target name, the sync is intentionally skipped to avoid changing artist-specified custom target workflows.
+
+------------------------------------------------------------
+Freeze Transform
+------------------------------------------------------------
+
+When enabled, Safe Fix applies Maya makeIdentity to freeze translate, rotate and scale when a freeze issue is detected.
+
+It does not run if the transform already appears frozen.
+
+------------------------------------------------------------
+Delete Construction History
+------------------------------------------------------------
+
+When enabled, Safe Fix deletes construction history when history is detected.
+
+This can remove procedural history and should be used with backups enabled.
+
+------------------------------------------------------------
+Move Pivot To Target
+------------------------------------------------------------
+
+When enabled, Safe Fix moves the pivot to the configured Pivot Target.
+
+Pivot Check must also be enabled for the target settings to be meaningful.
+
+This does not move the mesh geometry.
+
+------------------------------------------------------------
+Unlock Transform Attributes
+------------------------------------------------------------
+
+When enabled, Safe Fix unlocks transform-related attributes before applying fixes.
+
+Affected attributes can include:
+
+- translateX/Y/Z
+- rotateX/Y/Z
+- scaleX/Y/Z
+- visibility
+
+This is disabled by default because locked attributes may be intentional in some scenes.
+
+------------------------------------------------------------
+Make Selected Assets Visible
+------------------------------------------------------------
+
+When enabled, Safe Fix attempts to set selected asset visibility to true.
+
+This is disabled by default because hidden visibility may be intentional.
+
+------------------------------------------------------------
+Snap Bounds Min To Grid
+------------------------------------------------------------
+
+When enabled, Safe Fix moves the asset so its bounding box minimum point aligns to the nearest grid step.
+
+This changes asset position but does not resize geometry.
+
+------------------------------------------------------------
+Snap Pivot To Grid
+------------------------------------------------------------
+
+When enabled, Safe Fix moves the asset so its pivot aligns to the nearest grid step.
+
+This changes asset position but does not resize geometry.
+
+If both Snap Bounds Min To Grid and Snap Pivot To Grid are enabled, the current implementation prioritizes bounds-min snapping first.
+
+============================================================
+PREP / FIX TAB - PREVIEW / ARTIST-CONTROLLED HELPERS
+============================================================
+
+------------------------------------------------------------
+Create Pivot Ghost Preview
+------------------------------------------------------------
+
+Creates a locator at the current asset's calculated target pivot position.
+
+The locator name starts with:
+
+M2U_PIVOT_PREVIEW_
+
+This lets artists see where the pivot will be moved before applying Safe Fix.
+
+It does not modify the asset pivot.
+
+------------------------------------------------------------
+Delete Pivot Preview Locators
+------------------------------------------------------------
+
+Deletes only M2U-created pivot preview locator transforms whose names start with:
+
+M2U_PIVOT_PREVIEW_
+
+It does not delete mesh assets, UCX meshes, backups, or user-created non-M2U locators.
+
+------------------------------------------------------------
+Create Simple Box UCX
+------------------------------------------------------------
+
+Creates a simple box-shaped UCX collision mesh based on the selected asset's bounding box.
+
+The created collision mesh is named:
+
+UCX_<BaseAssetName>
+
+or a unique variant if that name already exists.
+
+This is an artist-controlled helper for quick basic collision. It is not a replacement for carefully authored gameplay collision when accurate collision is required.
+
+============================================================
+COLLISION TAB - COLLISION RULES
+============================================================
+
+------------------------------------------------------------
+Enable Collision Check
+------------------------------------------------------------
+
+When enabled, the tool evaluates UCX collision according to the selected requirement.
+
+When disabled, collision validation is skipped.
+
+------------------------------------------------------------
+Requirement
+------------------------------------------------------------
+
+Available values:
+
+Off
+- Collision check is disabled.
+
+UCX required
+- Matching UCX collision must exist.
+- If no match is found, the asset receives an issue based on Collision Severity.
+- At export time, the tool searches again. If no matching UCX exists, export fails for that asset to prevent base-only export.
+
+UCX optional
+- Matching UCX collision is used if found.
+- Missing UCX is not a failure.
+- Existing matching UCX can still be validated if Validate Matched UCX Meshes is enabled.
+
+No custom collision allowed
+- Matching UCX collision is considered a failure.
+- Use this when the target workflow should not export custom UCX meshes.
+
+------------------------------------------------------------
+Match Mode
+------------------------------------------------------------
+
+Base asset name
+- The target collision name is derived from the base mesh name.
+- Recommended for normal Unreal UCX workflows.
+
+Exact custom target name
+- The target collision name is taken from Custom Target Name.
+- Use this when UCX meshes intentionally target a different name.
+- UCX prefix sync is disabled in this mode for safety.
+
+------------------------------------------------------------
+Custom Target Name
+------------------------------------------------------------
+
+Used only when Match Mode is Exact custom target name.
+
+The tool searches for:
+
+UCX_<CustomTargetName>
+UCX_<CustomTargetName>_01
+UCX_<CustomTargetName>_02
+
+when multiple parts are accepted.
+
+------------------------------------------------------------
+Accept Multiple UCX Parts
+------------------------------------------------------------
+
+When enabled, the tool accepts:
+
+UCX_SM_Table_01
+UCX_SM_Table_01_01
+UCX_SM_Table_01_02
+
+When disabled, the tool only accepts the exact UCX target name without additional numbered suffixes.
+
+------------------------------------------------------------
+Validate Matched UCX Meshes
+------------------------------------------------------------
+
+When enabled, matched UCX meshes are checked separately.
+
+UCX validation includes:
+
+- Has mesh shape.
+- Freeze transform.
+- Construction history.
+- Polycount.
+- Zero thickness.
+- Visibility in hierarchy.
+- Locked transform attributes.
+
+------------------------------------------------------------
+UCX Mesh Validation Severity
+------------------------------------------------------------
+
+Off:
+- UCX mesh validation failures do not affect export status.
+
+Warning:
+- UCX mesh validation failures create warnings.
+
+Blocking:
+- UCX mesh validation failures block export.
+
+------------------------------------------------------------
+Collision Severity
+------------------------------------------------------------
+
+Controls how main collision rule failures affect the asset.
+
+Examples:
+
+- UCX required but no match found.
+- Custom UCX found when No custom collision allowed is active.
+
+Off:
+- Collision rule failures do not affect export status.
+
+Warning:
+- Collision rule failures create warnings.
+
+Blocking:
+- Collision rule failures block export.
+
+============================================================
+COLLISION TAB - COLLISION VISUALIZER
+============================================================
+
+------------------------------------------------------------
+Select Asset + Matching UCX
+------------------------------------------------------------
+
+Selects the currently highlighted result asset and its matching UCX collision meshes in Maya.
+
+Use this to quickly inspect collision pairing in the viewport or Outliner.
+
+------------------------------------------------------------
+Isolate Asset + UCX
+------------------------------------------------------------
+
+Attempts to isolate the current asset and matching UCX meshes in the active model panel.
+
+This depends on Maya viewport/model panel state.
+
+------------------------------------------------------------
+Colorize UCX Preview
+------------------------------------------------------------
+
+Assigns a preview material to matching UCX meshes so they are visually easier to identify.
+
+Before assignment, the tool remembers the UCX shading assignments for the current Maya session.
+
+------------------------------------------------------------
+Reset UCX Preview Materials
+------------------------------------------------------------
+
+Restores UCX preview material assignments remembered during the current Maya session.
+
+Important:
+
+This restore memory is session-based. If Maya is closed after colorizing, the tool cannot restore previous assignments from memory.
+
+============================================================
+PRESETS
+============================================================
+
+------------------------------------------------------------
+Marketplace Static Mesh
+------------------------------------------------------------
+
+General-purpose default preset for Unreal-ready marketplace/static mesh assets.
+
+Typical settings:
+
+- Required Prefix: SM_
+- Collision Requirement: UCX optional
+- Dimension Check: disabled
+- Grid Step: 10 cm
+- Max Polycount: 12000
+- Pivot Target: Bottom Center
+- Lightmap UV Required: disabled
+
+Best for:
+
+- Props.
+- Furniture.
+- General static meshes.
+- Marketplace-style asset packs.
+
+------------------------------------------------------------
+Modular Wall Kit
+------------------------------------------------------------
+
+Stricter preset for modular environment pieces.
+
+Typical settings:
+
+- Collision Requirement: UCX required
+- Collision Severity: blocking
+- Grid Step: 50 cm
+- Grid Severity: blocking
+- Dimension Check: enabled
+- Expected Size: 400 x 300 x 20 cm
+- Pivot Target: Bottom Front Center
+- Pivot Severity: blocking
+
+Best for:
+
+- Modular wall pieces.
+- Kitbash wall systems.
+- Grid-snapped modular environments.
+
+------------------------------------------------------------
+Furniture / Prop
+------------------------------------------------------------
+
+General prop preset with more flexible polycount.
+
+Typical settings:
+
+- Collision Requirement: UCX optional
+- Max Polycount: 20000
+- Pivot Target: Bottom Center
+- Dimension Check: disabled
+- Grid Step: 10 cm
+
+Best for:
+
+- Chairs.
+- Tables.
+- Decoration props.
+- Furniture sets.
+
+------------------------------------------------------------
+Collision Strict
+------------------------------------------------------------
+
+Strict collision-focused preset.
+
+Typical settings:
+
+- Collision Requirement: UCX required
+- Collision Severity: blocking
+- Validate Matched UCX Meshes: enabled
+- UCX Mesh Validation Severity: blocking
+- Max Polycount: 10000
+
+Best for:
+
+- Game assets that must ship with custom collision.
+- Modular pieces with required collision.
+- QA-controlled export passes.
+
+------------------------------------------------------------
+Nanite Candidate Check
+------------------------------------------------------------
+
+Preflight preset for high-poly static mesh candidates.
+
+Typical settings:
+
+- Max Polycount: 500000
+- Polycount Severity: warning
+- Collision Requirement: UCX optional
+- Dimension Check: disabled
+- LOD Readiness Check: disabled
+- Lightmap UV Required: disabled
+
+Best for:
+
+- High-poly Unreal static mesh candidates.
+- Nanite-oriented review passes.
+
+Important:
+
+This preset does not enable Nanite in Unreal automatically. It is a Maya-side preflight preset.
+
+============================================================
+M2U SCORE
+============================================================
+
+Each asset receives an M2U Score from 0 to 100.
+
+The score starts at 100 and is reduced by:
+
+- Blocking issues.
+- Warnings.
+- Failed checks.
+
+The score is a quick quality indicator. It is not a replacement for reviewing the detailed checks.
+
+A high score means fewer detected pipeline issues.
+A low score means the asset needs review before export.
+
+============================================================
+REPORTS
+============================================================
+
+------------------------------------------------------------
+HTML Report
+------------------------------------------------------------
+
+Artist-friendly visual QA report.
+
+Includes:
+
+- Total, Ready, Warning, Blocked and Exported counts.
+- Per-asset M2U Score.
+- Asset status.
+- Export status.
+- Polycount.
+- Profile.
+- Included UCX count.
+- Issues.
+- Fix Plan.
+- Fixed Actions.
+- Collision Matches.
+- Collision Target Candidates.
+- Core Checks.
+- LOD / Material Slot / UV / Socket Readiness.
+
+------------------------------------------------------------
+JSON Report
+------------------------------------------------------------
+
+Technical report for debugging or pipeline integration.
+
+Includes full structured data:
+
+- Settings.
+- Export summary.
+- Per-asset results.
+- Warnings and blocking issues.
+- Fix plans and fixed actions.
+- Collision match data.
+- Validation data.
+- Export status.
+
+------------------------------------------------------------
+Report Error Isolation
+------------------------------------------------------------
+
+Report writing is isolated from FBX export success.
+
+If an FBX exports successfully but a report writer fails, the successful FBX export should not be turned into a false export failure. Report errors are collected in the export summary.
+
+============================================================
+FBX EXPORT DETAILS
+============================================================
+
+The tool loads the Maya FBX plugin if needed.
+
+During export, the tool selects:
+
+- The base asset transform.
+- Matching UCX collision transforms that exist and are allowed by the collision settings.
+
+FBX export settings requested through MEL include:
+
+- FBXResetExport
+- Export smoothing groups enabled
+- Export tangents enabled
+- Export smooth mesh enabled
+- Export instances disabled
+- Export triangulation based on Triangulate FBX Export
+- Up axis set to Y
+
+Each exported asset receives its own FBX file.
+
+============================================================
+UCX EXPORT-TIME RECHECK
+============================================================
+
+Before exporting each asset, the tool searches for UCX matches again.
+
+This prevents stale results when:
+
+- The user created UCX after the first analysis.
+- The user renamed UCX after analysis.
+- Safe Fix renamed base meshes and synced UCX names.
+
+If UCX Required is active and no matching UCX exists at export time, the export fails for that asset with a clear message listing searched target candidates.
+
+============================================================
+SELECTION RESTORE AFTER SAFE FIX
+============================================================
+
+After Apply Safe Fixes, the tool restores Maya selection to the processed real assets.
+
+This prevents hidden backup meshes from remaining selected and lets the user continue directly to Export FBX + Reports without manually reselecting the fixed assets.
+
+Example:
+
+Before:
+
+Chair_01 selected
+
+After Safe Fix:
+
+SM_Chair_01 selected
+Hidden backup is not selected
+
+============================================================
+LIMITATIONS AND INTENTIONAL BOUNDARIES
+============================================================
+
+M2U Pipeline Suite is intentionally conservative.
+
+It does not:
+
+- Automatically resize geometry.
+- Automatically remodel geometry.
+- Solve UV overlaps.
+- Create advanced convex decomposition collision.
+- Create Unreal materials or material instances.
+- Fully configure Nanite settings in Unreal.
+- Fully configure Unreal LOD groups or screen sizes.
+- Guarantee Unreal socket setup inside static mesh assets.
+
+It does:
+
+- Detect common pipeline problems.
+- Apply safe artist-controlled cleanup operations.
+- Export base assets with matching UCX collision.
+- Produce detailed reports.
+- Generate an Unreal Python import helper.
+
+============================================================
+RECOMMENDED PRODUCTION WORKFLOW
+============================================================
+
+For a normal static mesh asset:
+
+1. Name the base mesh using the project prefix, for example SM_Table_01.
+2. Name matching UCX collision as UCX_SM_Table_01 or UCX_SM_Table_01_01.
+3. Assign material names using M_, MI_ or MAT_ prefixes.
+4. Select the base mesh transform only.
+5. Apply Marketplace Static Mesh or Furniture / Prop preset.
+6. Analyze Selected Assets.
+7. Review warnings.
+8. Apply Safe Fixes if the fix plan is acceptable.
+9. Revalidate.
+10. Export FBX + Reports.
+11. Review M2U_Pipeline_Report.html.
+12. Import FBX into Unreal manually or run the generated Unreal import script.
+
+For a strict modular asset:
+
+1. Use Modular Wall Kit or Collision Strict preset.
+2. Confirm dimensions match the expected modular size.
+3. Confirm grid size and bounds pass.
+4. Confirm UCX collision exists and validates.
+5. Treat blocked status as a required fix before export.
+
+============================================================
+END OF FUNCTIONS GUIDE
+============================================================

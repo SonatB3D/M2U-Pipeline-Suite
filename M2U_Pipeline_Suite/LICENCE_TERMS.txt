@@ -1,0 +1,112 @@
+M2U Pipeline Suite — LICENCE TERMS
+
+IMPORTANT
+Please read these terms before downloading, installing, using, sharing, or redistributing this tool.
+
+1. OWNERSHIP
+
+M2U Pipeline Suite and all related files, source code, scripts, shelf installer files, icons, documentation, examples, reports, and packaged releases remain the intellectual property of the author.
+
+The tool is provided for use under the terms described in this document. These terms do not transfer ownership of the tool, source code, branding, icons, documentation, or related materials to the user.
+
+2. ALLOWED USE
+
+You may:
+
+- download and use this tool for personal, educational, portfolio, evaluation, and internal workflow use
+- use this tool in both non-commercial and commercial content production workflows
+- install and run the tool on your own system
+- use the tool to prepare, validate, fix, export, and document your own Maya static mesh assets
+- use the tool while creating assets, games, projects, marketplace content, client work, or studio work
+- privately modify the tool for your own personal testing or internal workflow needs, as long as the modified version is not publicly shared, redistributed, sold, or represented as an official release
+
+3. FREE / OPTIONAL SUPPORT MODEL
+
+M2U Pipeline Suite may be distributed for free through the author’s official release locations.
+
+The author may also provide an optional pay-what-you-want or donation-based download through official platforms such as Gumroad or other official author-controlled pages.
+
+Optional payment or support does not grant resale, redistribution, sublicensing, or ownership rights unless a separate written agreement is provided by the author.
+
+4. RESTRICTIONS
+
+You may not:
+
+- re-upload this tool to other websites, drives, forums, repositories, marketplaces, file-sharing platforms, or third-party distribution channels
+- redistribute the files in modified or unmodified form without explicit permission from the author
+- claim authorship or ownership of the tool
+- sell, sublicense, rent, lease, bundle, package, or commercially redistribute the tool itself
+- include the tool itself as part of a paid product, paid service, asset pack, software bundle, course package, or commercial distribution without explicit written permission from the author
+- publish edited, modified, repackaged, renamed, or rebranded versions as if they were official releases
+- remove, hide, or alter author credits, copyright notices, licence terms, documentation notices, or distribution information
+- use the tool name, branding, icon, or documentation in a misleading way that suggests official endorsement, partnership, or authorship
+
+5. OFFICIAL DISTRIBUTION
+
+This tool should only be downloaded from the author’s official GitHub, official website, official Gumroad page, official profile, or another official release location controlled by the author.
+
+If you received the files from an unofficial source, you should obtain the latest official version from the official distribution location instead.
+
+6. MODIFICATION
+
+Private modification for personal testing, learning, or internal workflow adaptation is allowed.
+
+However, modified versions may not be:
+
+- publicly shared
+- redistributed
+- sold
+- uploaded to another platform
+- represented as official
+- used to mislead users about the original author or official release status
+
+If you want to publish, fork, redistribute, translate, bundle, or commercially modify the tool, you must obtain explicit permission from the author unless the author provides a separate open-source licence stating otherwise.
+
+7. COMMERCIAL USE CLARIFICATION
+
+You are allowed to use M2U Pipeline Suite as part of your own commercial production workflow.
+
+This means you may use the tool to create, prepare, validate, export, and deliver your own commercial 3D assets, games, marketplace products, client work, studio work, or Unreal Engine projects.
+
+However, you may not commercially redistribute, resell, repackage, sublicense, bundle, or include the tool itself in another paid product, service, software package, asset pack, training package, or marketplace listing without explicit written permission from the author.
+
+8. NO WARRANTY
+
+This tool is provided “as is” without warranty of any kind.
+
+The author does not guarantee that the tool will be error-free, uninterrupted, compatible with every Maya version, compatible with every studio environment, or suitable for every production pipeline.
+
+The author is not responsible for:
+
+- data loss
+- scene corruption
+- export issues
+- import issues
+- broken files
+- workflow interruption
+- production delays
+- compatibility issues
+- unsupported Maya versions
+- third-party plug-in conflicts
+- incorrect user configuration
+- issues caused by unofficial, modified, or redistributed versions
+
+Always keep backups of important Maya scenes and production files before using any automated cleanup, validation, or export tool.
+
+9. THIRD-PARTY SOFTWARE
+
+M2U Pipeline Suite is designed to work with Autodesk Maya and Unreal Engine workflows.
+
+Autodesk Maya, Unreal Engine, and related names, trademarks, and technologies belong to their respective owners.
+
+This tool is not officially affiliated with, endorsed by, sponsored by, or maintained by Autodesk or Epic Games unless explicitly stated by those companies.
+
+10. ACCEPTANCE
+
+By downloading, installing, running, copying, or using this tool, you agree to these licence terms.
+
+If you do not agree with these terms, do not download, install, run, copy, or use the tool.
+
+11. CONTACT / PERMISSION
+
+For redistribution requests, commercial licensing questions, permission requests, studio licensing, custom tool development, or official collaboration inquiries, contact the author through the official distribution page, official profile, or official contact method.
