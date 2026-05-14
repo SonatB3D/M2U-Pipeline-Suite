@@ -4,6 +4,14 @@ Free to Use - Maya to Unreal Static Mesh Preflight, Prep, Validation and Export 
 Full Documentation in Documentation.pdf file.
 Images at the bottom of the page.
 
+<p align="center">
+  <img
+    src="./m2u%20pipeline%20suite%20images/M2U Pipeline Suite Thumbnail.png"
+    alt="Core Checks and Validation Breakdown - 1657x833"
+    width="1200"
+  >
+</p>
+
 Public Release README
 
 
