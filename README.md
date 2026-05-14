@@ -12,6 +12,14 @@ Images at the bottom of the page.
   >
 </p>
 
+## Introduction Video
+
+[![M2U Pipeline Suite v1.0.8 Introduction Video](https://img.youtube.com/vi/5_MOvFh39qM/maxresdefault.jpg)](https://www.youtube.com/watch?v=5_MOvFh39qM)
+
+Watch the full introduction video on YouTube:
+
+https://www.youtube.com/watch?v=5_MOvFh39qM
+
 Public Release README
 
 
